@@ -1,0 +1,35 @@
+version: '3'
+services:
+  iot-api-plants:
+    # Local deploy to docker swarm, shouldn't be a security issue unless I ever take this off LAN
+    image: 10.0.1.10:5000/iot-api-plants
+    build: iot-api-plants
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongo
+    networks:
+      iot-backend:
+        aliases:
+          - iot-api-plants
+  # Not doing anything yet, but still needed
+  mongo:
+    image: mongo
+  proxy:
+    image: nginx
+    volumes:
+    - ./nginx/templates:/etc/nginx/templates
+    ports:
+    - "8080:80"
+    environment:
+    - NGINX_HOST=foobar.com
+    - NGINX_PORT=80
+    depends_on:
+      - iot-api-plants
+    networks:
+      iot-backend:
+        aliases:
+          - iot-router
+
+networks:
+  iot-backend:
