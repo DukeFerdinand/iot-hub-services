@@ -19,5 +19,8 @@ COPY ./src ./src
 RUN mkdir .cargo
 RUN cargo vendor > .cargo/config
 
+# should only be exposed to internal network. prelim tests seemed to confirm
+EXPOSE 8000
+
 # DEV ONLY COMMAND
 CMD [ "cargo", "watch", "-x", "run" ]

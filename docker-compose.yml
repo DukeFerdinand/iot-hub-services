@@ -4,8 +4,8 @@ services:
     # Local deploy to docker swarm, shouldn't be a security issue unless I ever take this off LAN
     image: 10.0.1.10:5000/iot-api-plants
     build: iot-api-plants
-    ports:
-      - "8000:8000"
+    # ports:
+    #   - "8000:8000"
     depends_on:
       - mongo
     networks:
