@@ -1,4 +1,7 @@
 FROM rustlang/rust:nightly
+
+ENV ROCKET_ENV=prod
+
 RUN rustup override set nightly
 
 WORKDIR /app

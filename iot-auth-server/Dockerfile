@@ -1,5 +1,4 @@
 FROM rustlang/rust:nightly
-ENV ROCKET_ENV=prod
 RUN rustup override set nightly
 
 # install the watcher script we need for dev
