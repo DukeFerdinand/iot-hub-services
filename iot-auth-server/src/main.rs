@@ -76,7 +76,6 @@ where
     if json.is_ok() {
         json.unwrap()
     } else {
-        println!("{}", json.unwrap_err());
         let generic_error: JSONResponse<String, String> = JSONResponse::new(
             None,
             Some("Error creating JSON response at /login".to_owned()),

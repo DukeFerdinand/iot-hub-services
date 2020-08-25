@@ -38,8 +38,6 @@ pub fn generate_token(user: String) -> Result<String, String> {
   };
   let my_claims = Claims::new(user);
 
-  println!("{:?}", my_claims);
-
   let token = encode(
     &Header::default(),
     &my_claims,
@@ -49,7 +47,6 @@ pub fn generate_token(user: String) -> Result<String, String> {
   if token.is_ok() {
     Ok(token.unwrap())
   } else {
-    println!("{}", token.unwrap_err());
     Err("Error generating token!".to_owned())
   }
 }
