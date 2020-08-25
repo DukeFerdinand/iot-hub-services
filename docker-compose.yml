@@ -1,35 +1,58 @@
 version: '3'
 services:
+  traefik:
+    image: "traefik:v2.2"
+    container_name: "traefik"
+    command:
+      # CHANGE FOR PROD ===== V
+      - "--api.insecure=true"
+      # CHANGE FOR PROD ===== ^
+
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+    labels:
+      # Register dashboard service
+      - "traefik.http.routers.dashboard.rule=PathPrefix(`/dashboard`)"
+      - "traefik.http.routers.dashboard.service=api@internal"
+
+      # Declare/use dashboard auth middleware - prod
+      # - "traefik.http.routers.dashboard.middlewares=dashboard-auth"
+      # - "traefik.http.middlewares.dashboard-auth.basicauth.usersfile=traefik_users"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    networks:
+      - iot-backend
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
   iot-api-plants:
-    # Local deploy to docker swarm, shouldn't be a security issue unless I ever take this off LAN
-    image: 127.0.0.1:5000/iot-api-plants
+    image: iot-api-plants
     build: iot-api-plants
-    depends_on:
-      - database
+    # depends_on:
+    #   - database
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.iot-api-plants.entrypoints=web"
+      - "traefik.http.routers.iot-api-plants.service=iot-api-plants"
+      - "traefik.http.services.iot-api-plants.loadbalancer.server.port=8000"
+
+      # Listen on path
+      - "traefik.http.routers.iot-api-plants.rule=PathPrefix(`/iot-plants`)"
+      # Strip path after match
+      - "traefik.http.middlewares.api-plants-pathstrip.stripprefix.prefixes=/iot-plants"
+
+      # Register path strip middleware
+      - "traefik.http.routers.iot-api-plants.middlewares=api-plants-pathstrip@docker"
     networks:
       iot-backend:
         aliases:
           - iot-api-plants
-  # Not doing anything yet, but still needed
-  database:
-    image: postgres
-    env_file:
-      - .db.env
-  proxy:
-    image: nginx
-    volumes:
-    - ./nginx/templates:/etc/nginx/templates
-    ports:
-    - "8106:80"
-    environment:
-    - NGINX_HOST=foobar.com
-    - NGINX_PORT=80
-    depends_on:
-      - iot-api-plants
-    networks:
-      iot-backend:
-        aliases:
-          - iot-router
+  # # Not doing anything yet, but still needed
+  # database:
+  #   image: postgres
+  #   env_file:
+  #     - .db.env
 
 networks:
   iot-backend:
