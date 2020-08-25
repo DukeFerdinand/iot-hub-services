@@ -13,8 +13,6 @@ services:
   # Not doing anything yet, but still needed
   database:
     image: postgres
-    env_file:
-      - .db.env
   proxy:
     image: nginx
     volumes:
