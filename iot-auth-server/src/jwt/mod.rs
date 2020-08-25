@@ -1,7 +1,6 @@
 use chrono::prelude::*;
 use chrono::Duration;
 use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
-use rocket::http::RawStr;
 use serde::{Deserialize, Serialize};
 
 /// Our claims struct, it needs to derive `Serialize` and/or `Deserialize`
@@ -51,7 +50,7 @@ pub fn generate_token(user: String) -> Result<String, String> {
   }
 }
 
-pub fn token_valid(token: &RawStr) -> bool {
+pub fn token_valid(token: &str) -> bool {
   let conf = Config {
     secret: "Fake_secret_use_ENV".to_owned(),
   };

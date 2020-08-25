@@ -7,8 +7,8 @@ pub mod users;
 extern crate rocket;
 
 use jwt::{generate_token, token_valid};
-use rocket::http::RawStr;
 use rocket::http::Status;
+use rocket::request::{Outcome, Request};
 use rocket_contrib::json::Json;
 use serde::{Deserialize, Serialize};
 use serde_json;
@@ -18,6 +18,30 @@ use std::default::Default;
 struct User {
     username: String,
     password: String,
+}
+
+#[derive(Debug)]
+struct ApiKey(String);
+
+#[derive(Debug)]
+enum ApiKeyError {
+    Invalid,
+    Expired,
+    Missing,
+}
+
+impl<'a, 'r> rocket::request::FromRequest<'a, 'r> for ApiKey {
+    type Error = ApiKeyError;
+
+    fn from_request(request: &'a Request<'r>) -> Outcome<Self, Self::Error> {
+        let keys: Vec<_> = request.headers().get("Authorization").collect();
+        match keys.len() {
+            0 => Outcome::Failure((Status::BadRequest, ApiKeyError::Missing)),
+            1 if token_valid(keys[0]) => Outcome::Success(ApiKey(keys[0].to_string())),
+            1 => Outcome::Failure((Status::BadRequest, ApiKeyError::Expired)),
+            _ => Outcome::Failure((Status::BadRequest, ApiKeyError::Invalid)),
+        }
+    }
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -107,13 +131,9 @@ fn login(data: Json<User>) -> String {
     }
 }
 
-#[get("/validate?<token>")]
-fn validate(token: &RawStr) -> Status {
-    if token_valid(token) {
-        Status::new(200, "Token is valid")
-    } else {
-        Status::new(403, "Bad token")
-    }
+#[get("/validate")]
+fn validate(_key: ApiKey) -> Status {
+    Status::new(200, "Token is valid")
 }
 
 fn main() {
