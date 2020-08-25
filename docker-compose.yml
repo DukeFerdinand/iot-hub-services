@@ -48,11 +48,35 @@ services:
       iot-backend:
         aliases:
           - iot-api-plants
-  # # Not doing anything yet, but still needed
-  # database:
-  #   image: postgres
-  #   env_file:
-  #     - .db.env
+
+  # Application-wide auth server
+  iot-auth-server:
+    image: iot-auth-server
+    build: iot-auth-server
+    # depends_on:
+    #   - database
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.iot-auth-server.entrypoints=web"
+      - "traefik.http.routers.iot-auth-server.service=iot-auth-server"
+      - "traefik.http.services.iot-auth-server.loadbalancer.server.port=8001"
+
+      # Listen on path
+      - "traefik.http.routers.iot-auth-server.rule=PathPrefix(`/iot-auth`)"
+      # Strip path after match
+      - "traefik.http.middlewares.auth-server-pathstrip.stripprefix.prefixes=/iot-auth"
+
+      # Register path strip middleware
+      - "traefik.http.routers.iot-auth-server.middlewares=auth-server-pathstrip@docker"
+    networks:
+      iot-backend:
+        aliases:
+          - iot-auth-server
+  # Not doing anything yet, but still needed
+  database:
+    image: mongo
+    env_file:
+      - .db.env
 
 networks:
   iot-backend:
