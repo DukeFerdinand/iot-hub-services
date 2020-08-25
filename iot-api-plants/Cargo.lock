@@ -169,13 +169,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "db-hub"
-version = "0.1.0"
-dependencies = [
- "rocket",
-]
-
-[[package]]
 name = "devise"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -339,6 +332,13 @@ checksum = "86b45e59b16c76b11bf9738fd5d38879d3bd28ad292d7b313608becb17ae2df9"
 dependencies = [
  "autocfg",
  "hashbrown",
+]
+
+[[package]]
+name = "iot-api-plants"
+version = "0.1.0"
+dependencies = [
+ "rocket",
 ]
 
 [[package]]

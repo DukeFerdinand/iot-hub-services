@@ -9,6 +9,7 @@ extern crate rocket;
 use jwt::{generate_token, token_valid};
 use rocket::http::RawStr;
 use rocket::http::Status;
+use rocket_contrib::json::Json;
 use serde::{Deserialize, Serialize};
 use serde_json;
 use std::default::Default;
@@ -92,23 +93,18 @@ fn index() -> Status {
 }
 
 #[post("/login", format = "application/json", data = "<data>")]
-fn login(data: String) -> String {
-    let parsed = serde_json::from_str::<User>(&data);
-    if parsed.is_ok() {
-        let user: User = parsed.unwrap();
-        let token_res = generate_token(user.username);
-        if token_res.is_ok() {
-            send_json_string::<String, String>(Some(token_res.unwrap()), None, None, None)
-        } else {
-            send_json_string::<String, String>(
-                None,
-                Some("Got error at token generation".to_owned()),
-                None,
-                None,
-            )
-        }
+fn login(data: Json<User>) -> String {
+    let user = data.into_inner();
+    let token_res = generate_token(user.username);
+    if token_res.is_ok() {
+        send_json_string::<String, String>(Some(token_res.unwrap()), None, None, None)
     } else {
-        format!("Error in /login - {:?}", parsed.unwrap_err())
+        send_json_string::<String, String>(
+            None,
+            Some("Got error at token generation".to_owned()),
+            None,
+            None,
+        )
     }
 }
 

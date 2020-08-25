@@ -1,9 +1,5 @@
 FROM rustlang/rust:nightly
-ENV ROCKET_ENV=prod
 RUN rustup override set nightly
-
-# install the watcher script we need for dev
-RUN cargo install cargo-watch
 
 WORKDIR /app
 
@@ -20,8 +16,10 @@ COPY ./src ./src
 RUN mkdir .cargo
 RUN cargo vendor > .cargo/config
 
+RUN cargo build --release
+
 # should only be exposed to internal network. prelim tests seemed to confirm
 EXPOSE 8001
 
 # DEV ONLY COMMAND
-CMD [ "cargo", "watch", "-x", "run" ]
+CMD [ "./target/release/iot-auth" ]
