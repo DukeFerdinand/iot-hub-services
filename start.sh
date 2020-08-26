@@ -8,4 +8,4 @@ echo "Pushing production services to swarm registry..."
 echo "Deploying to swarm"
 /usr/bin/docker stack deploy --compose-file docker-compose-prod.yml iot-hub-stack
 
-echo "Done!"
+echo "Done! Please wait a bit for changes to take effect throughout swarm."
