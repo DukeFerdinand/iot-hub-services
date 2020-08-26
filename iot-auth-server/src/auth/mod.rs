@@ -17,7 +17,6 @@ impl Claims {
   /// timestamps.
   pub fn new(user: String) -> Self {
     // normalize the timestamps by stripping of microseconds
-    // let iat = iat.date().and_hms_milli(iat.hour(), iat.minute(), iat.second(), 0);
     let exp = Utc::now() + Duration::days(14);
     Self {
       user,
