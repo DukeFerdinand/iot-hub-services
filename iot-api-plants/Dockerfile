@@ -1,4 +1,4 @@
-FROM rustlang/rust:nightly
+FROM rust:latest
 RUN rustup override set nightly
 
 # install the watcher script we need for dev
