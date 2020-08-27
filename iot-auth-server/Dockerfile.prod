@@ -13,10 +13,7 @@ COPY ./Rocket.toml ./Rocket.toml
 # copy your source tree
 COPY ./src ./src
 
-# cache deps
-RUN mkdir .cargo
-RUN cargo vendor > .cargo/config
-
+# actually build the code
 RUN cargo build --release
 
 # should only be exposed to internal network. prelim tests seemed to confirm
