@@ -12,6 +12,7 @@ services:
       - "--api.dashboard=true"
       - "--providers.docker=true"
       - "--providers.docker.swarmMode=true"
+      - "--providers.docker.network=iot-proxy"
       - "--entrypoints.web.address=:80"
     labels:
       # Register dashboard service
@@ -25,6 +26,7 @@ services:
       - "80:80"
       - "8080:8080"
     networks:
+      - iot-proxy
       - iot-backend
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
@@ -52,6 +54,7 @@ services:
       - "traefik.http.routers.iot-api-plants.middlewares=plant-auth@docker, api-plants-pathstrip@docker"
 
     networks:
+      iot-proxy:
       iot-backend:
         aliases:
           - iot-api-plants
@@ -80,6 +83,7 @@ services:
       - "traefik.http.middlewares.general-auth.forwardAuth.trustForwardHeader=true"
 
     networks:
+      iot-proxy:
       iot-backend:
         aliases:
           - forward-auth-server
@@ -92,3 +96,5 @@ services:
 
 networks:
   iot-backend:
+  iot-proxy:
+    external: true
