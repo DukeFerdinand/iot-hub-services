@@ -28,7 +28,7 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
   iot-api-plants:
-    image: 127.0.0.1:5000/iot-api-plants
+    image: dougflynn/iot-api-plants:arm64
     build: iot-api-plants
     # depends_on:
     #   - database
@@ -57,7 +57,7 @@ services:
 
   # Application-wide auth server
   forward-auth-server:
-    image: 127.0.0.1:5000/iot-auth-server
+    image: dougflynn/iot-auth-server:arm64
     build: iot-auth-server
     # depends_on:
     #   - database
