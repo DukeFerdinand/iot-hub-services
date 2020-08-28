@@ -11,8 +11,8 @@ services:
 
         # Declare/use dashboard auth middleware - prod
         - "traefik.http.routers.dashboard.middlewares=dashboard-auth@docker"
-        - traefik.http.services.traefik.loadbalancer.server.port=8000
-        - "traefik.http.middlewares.dashboard-auth.forwardAuth.address=http://127.0.0.1/iot-auth/validate"
+        - traefik.http.services.traefik.loadbalancer.server.port=8080
+        # - "traefik.http.middlewares.dashboard-auth.forwardAuth.address=http://127.0.0.1/iot-auth/validate"
       placement:
         constraints:
           - node.role==manager
@@ -26,7 +26,8 @@ services:
 
       # https
       - --entrypoints.web-secured.address=:443
-      - --certificatesresolvers.cert-challenge.acme.httpChallenge.entrypoint=web
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      # - --certificatesresolvers.cert-challenge.acme.httpChallenge.entrypoint=web
       - --certificatesresolvers.cert-challenge.acme.email=DougFlynnDevelopment@gmail.com
       - --certificatesresolvers.cert-challenge.acme.storage=/letsencrypt/acme.json
     ports:
@@ -40,7 +41,7 @@ services:
       - letsencrypt:/letsencrypt
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
   iot-api-plants:
-    image: dougflynn/iot-api-plants:arm64
+    image: dougflynn/iot-api-plants:latest
     build: iot-api-plants
     # depends_on:
     #   - database
@@ -81,7 +82,7 @@ services:
 
   # Application-wide auth server
   forward-auth-server:
-    image: dougflynn/iot-auth-server:arm64
+    image: dougflynn/iot-auth-server:latest
     build: iot-auth-server
     # depends_on:
       #   - database

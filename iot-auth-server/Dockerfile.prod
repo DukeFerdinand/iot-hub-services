@@ -1,23 +1,31 @@
-FROM dougflynn/rust-arm64-nightly:latest
+# FROM dougflynn/rust-arm64-nightly:latest as build
 
-ENV ROCKET_ENV=prod
+# ENV ROCKET_ENV=prod
+
+# WORKDIR /app
+
+# # copy over your manifests
+# COPY ./Cargo.lock ./Cargo.lock
+# COPY ./Cargo.toml ./Cargo.toml
+# # Framework specific toml
+# COPY ./Rocket.toml ./Rocket.toml
+
+# # copy your source tree
+# COPY ./src ./src
+
+# # actually build the code
+# RUN cargo build --release
+
+# # should only be exposed to internal network. prelim tests seemed to confirm
+# EXPOSE 8001
+
+# # DEV ONLY COMMAND
+# CMD [ "./target/release/iot-auth" ]
+
+FROM debian:stretch-slim
 
 WORKDIR /app
 
-# copy over your manifests
-COPY ./Cargo.lock ./Cargo.lock
-COPY ./Cargo.toml ./Cargo.toml
-# Framework specific toml
-COPY ./Rocket.toml ./Rocket.toml
+COPY ./target/aarch64-unknown-linux-gnu/release/iot-auth ./
 
-# copy your source tree
-COPY ./src ./src
-
-# actually build the code
-RUN cargo build --release
-
-# should only be exposed to internal network. prelim tests seemed to confirm
-EXPOSE 8001
-
-# DEV ONLY COMMAND
-CMD [ "./target/release/iot-auth" ]
+CMD ["./iot-auth"]
