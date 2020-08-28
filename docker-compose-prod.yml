@@ -6,9 +6,8 @@ services:
     deploy:
       labels:
         # Register dashboard service
-        - "traefik.http.routers.dashboard.rule=PathPrefix(`/dashboard`)"
+        - "traefik.http.routers.dashboard.rule=Host(`iot-proc.dougflynn.dev`)"
         - "traefik.http.routers.dashboard.service=api@internal"
-        - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
 
         # Declare/use dashboard auth middleware - prod
         - "traefik.http.routers.dashboard.middlewares=dashboard-auth@docker"
@@ -23,13 +22,21 @@ services:
       - "--providers.docker.swarmMode=true"
       - "--providers.docker.network=iot-proxy"
       - "--entrypoints.web.address=:80"
+
+      # https
+      - "--entrypoints.web-secured.address=:443"
+      - --certificatesresolvers.cert-challege.acme.httpChallenge.entrypoint=web
+      - --certificatesresolvers.cert-challege.acme.email=DougFlynnDevelopment@gmail.com
+      - --certificatesresolvers.cert-challege.acme.storage=/letsencrypt/acme.json
     ports:
       - "80:80"
+      - "443:443"
       - "8080:8080"
     networks:
       - iot-proxy
       - iot-backend
     volumes:
+      - letsencrypt:/letsencrypt
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
   iot-api-plants:
     image: dougflynn/iot-api-plants:arm64
@@ -42,8 +49,14 @@ services:
         - traefik.enable=true
         - traefik.http.routers.iot-api-plants.entrypoints=web
         - traefik.http.routers.iot-api-plants.service=iot-api-plants
+        - traefik.http.routers.iot-api-plants-secured.service=iot-api-plants
         - traefik.http.services.iot-api-plants.loadbalancer.server.port=8000
-        - traefik.http.routers.iot-api-plants.rule=PathPrefix(`/iot-plants`)
+        - traefik.http.routers.iot-api-plants.rule=Host(`iot-api.dougflynn.dev`) && PathPrefix(`/iot-plants`)
+
+        # https
+        - traefik.http.routers.iot-api-plants-secured.rule=Host(`iot-api.dougflynn.dev`) && PathPrefix(`/iot-plants`)
+        - traefik.http.routers.iot-api-plants-secured.entrypoints=web-secured
+        - traefik.http.routers.iot-api-plants-secured.tls.certresolver=cert-challenge
 
         # Declare middlewares
         #  -> Auth forward to general auth container
@@ -76,15 +89,23 @@ services:
         - traefik.enable=true
         - traefik.http.routers.forward-auth-server.entrypoints=web
         - traefik.http.routers.forward-auth-server.service=forward-auth-server
+        - traefik.http.routers.forward-auth-server-secured.service=forward-auth-server
         - traefik.http.services.forward-auth-server.loadbalancer.server.port=8001
 
+        # https
+        - traefik.http.routers.forward-auth-server-secured.entrypoints=web-secured
+        - traefik.http.routers.forward-auth-server-secured.tls.certresolver=cert-challenge
+
         # Listen on path
-        - traefik.http.routers.forward-auth-server.rule=PathPrefix(`/iot-auth`)
+        - traefik.http.routers.forward-auth-server.rule=Host(`iot-api.dougflynn.dev`) && PathPrefix(`/iot-auth`)
+        - traefik.http.routers.forward-auth-server-secured.rule=Host(`iot-api.dougflynn.dev`) && PathPrefix(`/iot-auth`)
+
         # Strip path after match
         - traefik.http.middlewares.auth-server-pathstrip.stripprefix.prefixes=/iot-auth
 
         # Register path strip middleware
         - traefik.http.routers.forward-auth-server.middlewares=auth-server-pathstrip@docker
+        - traefik.http.routers.forward-auth-server-secured.middlewares=auth-server-pathstrip@docker
 
         # Create general-auth middleware
         - traefik.http.middlewares.general-auth.forwardAuth.trustForwardHeader=true
@@ -107,15 +128,27 @@ services:
         - traefik.enable=true
         - traefik.http.routers.database.entrypoints=web
         - traefik.http.routers.database.service=database
+        - traefik.http.routers.database-secured.service=database
         - traefik.http.services.database.loadbalancer.server.port=5000
 
+        # https
+        - traefik.http.routers.database-secured.entrypoints=web-secured
+        - traefik.http.routers.database-secured.tls.certresolver=cert-challenge
+
         # Listen on path
-        - traefik.http.routers.database.rule=PathPrefix(`/iot-db`)
+        - traefik.http.routers.database.rule=Host(`iot-api.dougflynn.dev`) && PathPrefix(`/iot-db`)
+        - traefik.http.routers.database-secured.rule=Host(`iot-api.dougflynn.dev`) && PathPrefix(`/iot-db`)
+
         # Strip path after match
         - traefik.http.middlewares.db-server-pathstrip.stripprefix.prefixes=/iot-db
 
         # Register path strip middleware
         - traefik.http.routers.database.middlewares=db-server-pathstrip@docker
+        - traefik.http.routers.database-secured.middlewares=db-server-pathstrip@docker
+
+# Persistent https certs
+volumes:
+  letsencrypt:
 
 networks:
   iot-backend:
