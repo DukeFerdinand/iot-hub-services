@@ -4,6 +4,15 @@ services:
     image: "traefik:v2.2"
     container_name: "traefik"
     deploy:
+      labels:
+        # Register dashboard service
+        - "traefik.http.routers.dashboard.rule=PathPrefix(`/dashboard`)"
+        - "traefik.http.routers.dashboard.service=api@internal"
+        - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
+
+        # Declare/use dashboard auth middleware - prod
+        - "traefik.http.routers.dashboard.middlewares=dashboard-auth@docker"
+        - "traefik.http.middlewares.dashboard-auth.forwardAuth.address=http://127.0.0.1/iot-auth/validate"
       placement:
         constraints:
           - node.role==manager
@@ -14,15 +23,6 @@ services:
       - "--providers.docker.swarmMode=true"
       - "--providers.docker.network=iot-proxy"
       - "--entrypoints.web.address=:80"
-    labels:
-      # Register dashboard service
-      - "traefik.http.routers.dashboard.rule=PathPrefix(`/dashboard`)"
-      - "traefik.http.routers.dashboard.service=api@internal"
-      - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
-
-      # Declare/use dashboard auth middleware - prod
-      - "traefik.http.routers.dashboard.middlewares=dashboard-auth@docker"
-      - "traefik.http.middlewares.dashboard-auth.forwardAuth.address=http://127.0.0.1/iot-auth/validate"
     ports:
       - "80:80"
       - "8080:8080"
@@ -36,23 +36,24 @@ services:
     build: iot-api-plants
     # depends_on:
     #   - database
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.iot-api-plants.entrypoints=web"
-      - "traefik.http.routers.iot-api-plants.service=iot-api-plants"
-      - "traefik.http.services.iot-api-plants.loadbalancer.server.port=8000"
-      - "traefik.http.routers.iot-api-plants.rule=PathPrefix(`/iot-plants`)"
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.iot-api-plants.entrypoints=web"
+        - "traefik.http.routers.iot-api-plants.service=iot-api-plants"
+        - "traefik.http.services.iot-api-plants.loadbalancer.server.port=8000"
+        - "traefik.http.routers.iot-api-plants.rule=PathPrefix(`/iot-plants`)"
 
-      # Declare middlewares
-      #  -> Auth forward to general auth container
-      - "traefik.http.middlewares.plant-auth.forwardAuth.address=http://127.0.0.1/iot-auth/validate"
-      - "traefik.http.middlewares.plant-auth.forwardAuth.trustForwardHeader=true"
-      #  -> Strip /iot-plants from url so we can serve on /
-      - "traefik.http.middlewares.api-plants-pathstrip.stripprefix.prefixes=/iot-plants"
+        # Declare middlewares
+        #  -> Auth forward to general auth container
+        - "traefik.http.middlewares.plant-auth.forwardAuth.address=http://127.0.0.1/iot-auth/validate"
+        - "traefik.http.middlewares.plant-auth.forwardAuth.trustForwardHeader=true"
+        #  -> Strip /iot-plants from url so we can serve on /
+        - "traefik.http.middlewares.api-plants-pathstrip.stripprefix.prefixes=/iot-plants"
 
-      # Register middlewares
-      # -> Try and put the path strip one last. I don't know if it changes things but it doesn't hurt
-      - "traefik.http.routers.iot-api-plants.middlewares=plant-auth@docker, api-plants-pathstrip@docker"
+        # Register middlewares
+        # -> Try and put the path strip one last. I don't know if it changes things but it doesn't hurt
+        - "traefik.http.routers.iot-api-plants.middlewares=plant-auth@docker, api-plants-pathstrip@docker"
 
     ports:
       - "8000:8000"
@@ -68,22 +69,23 @@ services:
     build: iot-auth-server
     # depends_on:
     #   - database
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.forward-auth-server.entrypoints=web"
-      - "traefik.http.routers.forward-auth-server.service=forward-auth-server"
-      - "traefik.http.services.forward-auth-server.loadbalancer.server.port=8001"
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.forward-auth-server.entrypoints=web"
+        - "traefik.http.routers.forward-auth-server.service=forward-auth-server"
+        - "traefik.http.services.forward-auth-server.loadbalancer.server.port=8001"
 
-      # Listen on path
-      - "traefik.http.routers.forward-auth-server.rule=PathPrefix(`/iot-auth`)"
-      # Strip path after match
-      - "traefik.http.middlewares.auth-server-pathstrip.stripprefix.prefixes=/iot-auth"
+        # Listen on path
+        - "traefik.http.routers.forward-auth-server.rule=PathPrefix(`/iot-auth`)"
+        # Strip path after match
+        - "traefik.http.middlewares.auth-server-pathstrip.stripprefix.prefixes=/iot-auth"
 
-      # Register path strip middleware
-      - "traefik.http.routers.forward-auth-server.middlewares=auth-server-pathstrip@docker"
+        # Register path strip middleware
+        - "traefik.http.routers.forward-auth-server.middlewares=auth-server-pathstrip@docker"
 
-      # Create general-auth middleware
-      - "traefik.http.middlewares.general-auth.forwardAuth.trustForwardHeader=true"
+        # Create general-auth middleware
+        - "traefik.http.middlewares.general-auth.forwardAuth.trustForwardHeader=true"
     ports:
       - "8001:8001"
     networks:
