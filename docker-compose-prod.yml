@@ -112,13 +112,10 @@ services:
         # Listen on path
         - traefik.http.routers.database.rule=PathPrefix(`/iot-db`)
         # Strip path after match
-        - traefik.http.middlewares.auth-server-pathstrip.stripprefix.prefixes=/iot-db
+        - traefik.http.middlewares.db-server-pathstrip.stripprefix.prefixes=/iot-db
 
         # Register path strip middleware
-        - traefik.http.routers.database.middlewares=auth-server-pathstrip@docker
-
-        # Create general-auth middleware
-        - traefik.http.middlewares.general-auth.forwardAuth.trustForwardHeader=true
+        - traefik.http.routers.database.middlewares=db-server-pathstrip@docker
 
 networks:
   iot-backend:
