@@ -11,6 +11,7 @@ services:
 
         # Declare/use dashboard auth middleware - prod
         - "traefik.http.routers.dashboard.middlewares=dashboard-auth@docker"
+        - traefik.http.services.traefik.loadbalancer.server.port=8000
         - "traefik.http.middlewares.dashboard-auth.forwardAuth.address=http://127.0.0.1/iot-auth/validate"
       placement:
         constraints:
@@ -24,10 +25,10 @@ services:
       - "--entrypoints.web.address=:80"
 
       # https
-      - "--entrypoints.web-secured.address=:443"
-      - --certificatesresolvers.cert-challege.acme.httpChallenge.entrypoint=web
-      - --certificatesresolvers.cert-challege.acme.email=DougFlynnDevelopment@gmail.com
-      - --certificatesresolvers.cert-challege.acme.storage=/letsencrypt/acme.json
+      - --entrypoints.web-secured.address=:443
+      - --certificatesresolvers.cert-challenge.acme.httpChallenge.entrypoint=web
+      - --certificatesresolvers.cert-challenge.acme.email=DougFlynnDevelopment@gmail.com
+      - --certificatesresolvers.cert-challenge.acme.storage=/letsencrypt/acme.json
     ports:
       - "80:80"
       - "443:443"
@@ -51,6 +52,7 @@ services:
         - traefik.http.routers.iot-api-plants.service=iot-api-plants
         - traefik.http.routers.iot-api-plants-secured.service=iot-api-plants
         - traefik.http.services.iot-api-plants.loadbalancer.server.port=8000
+        - traefik.http.services.iot-api-plants-secured.loadbalancer.server.port=8000
         - traefik.http.routers.iot-api-plants.rule=Host(`iot-api.dougflynn.dev`) && PathPrefix(`/iot-plants`)
 
         # https
@@ -91,6 +93,7 @@ services:
         - traefik.http.routers.forward-auth-server.service=forward-auth-server
         - traefik.http.routers.forward-auth-server-secured.service=forward-auth-server
         - traefik.http.services.forward-auth-server.loadbalancer.server.port=8001
+        - traefik.http.services.forward-auth-server-secured.loadbalancer.server.port=8001
 
         # https
         - traefik.http.routers.forward-auth-server-secured.entrypoints=web-secured
@@ -130,6 +133,7 @@ services:
         - traefik.http.routers.database.service=database
         - traefik.http.routers.database-secured.service=database
         - traefik.http.services.database.loadbalancer.server.port=5000
+        - traefik.http.services.database-secured.loadbalancer.server.port=5000
 
         # https
         - traefik.http.routers.database-secured.entrypoints=web-secured
