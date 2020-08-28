@@ -13,8 +13,8 @@ use structures::api::{send_json_string, ApiKey};
 use structures::user::User;
 
 #[get("/")]
-fn index() -> Status {
-    Status::new(405, "Try /auth-test")
+fn index() -> &'static str {
+    "Only here for https"
 }
 
 #[post("/login", format = "application/json", data = "<data>")]
