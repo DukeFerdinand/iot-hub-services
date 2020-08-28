@@ -18,6 +18,7 @@ services:
       # Register dashboard service
       - "traefik.http.routers.dashboard.rule=PathPrefix(`/dashboard`)"
       - "traefik.http.routers.dashboard.service=api@internal"
+      - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
 
       # Declare/use dashboard auth middleware - prod
       - "traefik.http.routers.dashboard.middlewares=dashboard-auth@docker"
@@ -53,6 +54,8 @@ services:
       # -> Try and put the path strip one last. I don't know if it changes things but it doesn't hurt
       - "traefik.http.routers.iot-api-plants.middlewares=plant-auth@docker, api-plants-pathstrip@docker"
 
+    ports:
+      - "8000:8000"
     networks:
       iot-proxy:
       iot-backend:
@@ -81,7 +84,8 @@ services:
 
       # Create general-auth middleware
       - "traefik.http.middlewares.general-auth.forwardAuth.trustForwardHeader=true"
-
+    ports:
+      - "8001:8001"
     networks:
       iot-proxy:
       iot-backend:
