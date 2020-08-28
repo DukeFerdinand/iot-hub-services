@@ -26,7 +26,7 @@ services:
 
       # https
       - --entrypoints.web-secured.address=:443
-      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.cert-challenge.acme.tlschallenge=true"
       # - --certificatesresolvers.cert-challenge.acme.httpChallenge.entrypoint=web
       - --certificatesresolvers.cert-challenge.acme.email=DougFlynnDevelopment@gmail.com
       - --certificatesresolvers.cert-challenge.acme.storage=/letsencrypt/acme.json
