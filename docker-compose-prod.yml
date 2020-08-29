@@ -1,21 +1,5 @@
 version: '3.6'
 services:
-  iot-api-plants:
-    image: dougflynn/iot-api-plants:latest
-    build: iot-api-plants
-    # depends_on:
-    #   - database
-    deploy:
-      replicas: 1
-
-    ports:
-      - "8000:8000"
-    networks:
-      iot-proxy:
-      iot-backend:
-        aliases:
-          - iot-api-plants
-
   # Application-wide auth server
   iot-auth-server:
     image: dougflynn/iot-auth-server:latest
@@ -26,12 +10,29 @@ services:
       replicas: 2
 
     ports:
-      - "8001:8001"
+      - "8000:8000"
     networks:
       iot-proxy:
       iot-backend:
         aliases:
           - iot-auth-server
+
+  iot-api-plants:
+    image: dougflynn/iot-api-plants:latest
+    build: iot-api-plants
+    # depends_on:
+    #   - database
+    deploy:
+      replicas: 1
+
+    ports:
+      - "8001:8001"
+    networks:
+      iot-proxy:
+      iot-backend:
+        aliases:
+          - iot-api-plants
+
 
   # Not doing anything yet, but still needed
   database:
