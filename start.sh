@@ -1,9 +1,7 @@
 #!/bin/bash
 
+set -xe
 echo "Starting services --------"
-
-echo "Removing old stack"
-/usr/bin/docker stack rm iot-hub-stack
 
 # Make sure your images are uploaded before this
 echo "Deploying to swarm"
