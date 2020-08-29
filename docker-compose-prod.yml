@@ -57,7 +57,7 @@ services:
         - traefik.http.routers.iot-api-plants.rule=Host(`iot-api.dougflynn.dev`) && PathPrefix(`/iot-plants`)
 
         # https
-        # - traefik.http.routers.iot-api-plants-secured.rule=Host(`iot-api.dougflynn.dev`) && PathPrefix(`/iot-plants`)
+        - traefik.http.routers.iot-api-plants-secured.rule=Host(`iot-api.dougflynn.dev`) && PathPrefix(`/iot-plants`)
         - traefik.http.routers.iot-api-plants-secured.entrypoints=web-secured
         - traefik.http.routers.iot-api-plants-secured.tls.certresolver=cert-challenge
 
@@ -102,7 +102,7 @@ services:
 
         # Listen on path
         - traefik.http.routers.iot-auth-server.rule=Host(`iot-api.dougflynn.dev`) && PathPrefix(`/iot-auth`)
-        # - traefik.http.routers.iot-auth-server-secured.rule=Host(`iot-api.dougflynn.dev`) && PathPrefix(`/iot-auth`)
+        - traefik.http.routers.iot-auth-server-secured.rule=Host(`iot-api.dougflynn.dev`) && PathPrefix(`/iot-auth`)
 
         # Strip path after match
         - traefik.http.middlewares.auth-server-pathstrip.stripprefix.prefixes=/iot-auth
