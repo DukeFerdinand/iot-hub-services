@@ -1,28 +1,3 @@
-# FROM dougflynn/rust-arm64-nightly:latest
-
-# ENV ROCKET_ENV=prod
-
-# RUN rustup override set nightly
-
-# WORKDIR /app
-
-# # copy over your manifests
-# COPY ./Cargo.lock ./Cargo.lock
-# COPY ./Cargo.toml ./Cargo.toml
-# # Framework specific toml
-# COPY ./Rocket.toml ./Rocket.toml
-
-# # copy your source tree
-# COPY ./src ./src
-
-# # actually build the code
-# RUN cargo build --release
-
-# # should only be exposed to internal network. prelim tests seemed to confirm
-# EXPOSE 8000
-
-# # DEV ONLY COMMAND
-# CMD [ "./target/release/iot-api-plants" ]
 FROM debian:stretch-slim
 
 WORKDIR /app

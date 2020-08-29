@@ -1,7 +1,7 @@
 [development]
 # Runs in docker container
 address = "0.0.0.0"
-port = 8001
+port = 8000
 workers = 2
 log = "normal"
 limits = { forms = 32768 }
@@ -16,7 +16,7 @@ limits = { forms = 32768 }
 
 [production]
 address = "0.0.0.0"
-port = 8001
+port = 8000
 workers = 2
 log = "critical"
 limits = { forms = 32768 }

@@ -1,10 +1,27 @@
 version: '3.6'
 services:
+  # Application-wide auth server
+  forward-auth-server:
+    image: iot-auth-server
+    build: iot-auth-server
+    # depends_on:
+    #   - database
+    ports:
+      - 8000:8000
+    volumes:
+      - "./iot-auth-server:/app"
+    networks:
+      iot-backend:
+        aliases:
+          - forward-auth-server
+
   iot-api-plants:
     image: iot-api-plants
     build: iot-api-plants
     # depends_on:
     #   - database
+    ports:
+      - 8001:8001
     volumes:
       - "./iot-api-plants:/app"
     networks:
@@ -12,18 +29,7 @@ services:
         aliases:
           - iot-api-plants
 
-  # Application-wide auth server
-  forward-auth-server:
-    image: iot-auth-server
-    build: iot-auth-server
-    # depends_on:
-    #   - database
-    volumes:
-      - "./iot-auth-server:/app"
-    networks:
-      iot-backend:
-        aliases:
-          - forward-auth-server
+
   # Not doing anything yet, but still needed
   database:
     image: mongo
