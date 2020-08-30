@@ -4,4 +4,6 @@ WORKDIR /app
 
 COPY ./target/aarch64-unknown-linux-gnu/release/iot-api-plants ./
 
+EXPOSE 8001
+
 CMD ["./iot-api-plants"]
