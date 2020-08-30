@@ -2,8 +2,8 @@ FROM debian:stretch-slim
 
 WORKDIR /app
 
-COPY ./target/aarch64-unknown-linux-gnu/release/iot-api-plants ./
+COPY ./Rocket.toml ./
 
-EXPOSE 8001
+COPY ./target/aarch64-unknown-linux-gnu/release/iot-api-plants ./
 
 CMD ["./iot-api-plants"]
