@@ -24,6 +24,19 @@ docker buildx build -t dougflynn/iot-api-plants:latest --platform linux/arm64 -f
 echo "DONE. Swapping back to root dir"
 cd ..
 
+echo "Building MQTT handler"
+cd iot-mqtt-hub
+echo "Creating arm64 docker image and pushing"
+docker buildx build -t dougflynn/iot-mqtt-hub:latest --platform linux/arm64 -f Dockerfile.prod --push .
+
+echo "Skipping mosquitto image, already supports arm64"
+# cd iot-mqtt-broker
+# echo "Creating arm64 docker image and pushing"
+# docker buildx build -t dougflynn/iot-mqtt-hub:latest --platform linux/arm64 -f Dockerfile.prod --push .
+
+echo "DONE. Swapping back to root dir"
+cd ..
+
 echo "NOTHING LEFT TO DO :)"
 
 echo "Run the following to push to prod/swarm:"

@@ -29,6 +29,33 @@ services:
         aliases:
           - iot-api-plants
 
+  iot-mqtt-hub:
+    image: iot-mqtt-hub
+    build: iot-mqtt-hub
+    # depends_on:
+    #   - database
+    ports:
+      - 8002:8002
+    volumes:
+      - "./iot-mqtt-hub:/app"
+    networks:
+      iot-backend:
+        aliases:
+          - iot-mqtt-hub
+
+  iot-mqtt-broker:
+    image: eclipse-mosquitto
+    ports:
+      - 1883:1883
+      - 9001:9001
+    volumes:
+      - "./iot-mqtt-hub:/app"
+    networks:
+      iot-backend:
+        aliases:
+          - iot-mqtt-broker
+
+
 
   # Not doing anything yet, but still needed
   database:
