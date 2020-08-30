@@ -1,0 +1,26 @@
+name: iot-auth-server
+
+on:
+  push:
+    paths:
+      - "iot-auth-server/*"
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build
+      working-directory: "iot-auth-server"
+      run: cargo build --verbose
+#     - name: Run tests
+#       working-directory: "iot-auth-server"
+#       run: cargo test --verbose
