@@ -33,6 +33,37 @@ services:
         aliases:
           - iot-api-plants
 
+  iot-mqtt-hub:
+    image: dougflynn/iot-mqtt-hub:latest
+    build: iot-mqtt-hub
+    # depends_on:
+    #   - database
+    deploy:
+      replicas: 1
+    ports:
+      - 8001:8001
+    volumes:
+      - "./iot-mqtt-hub:/app"
+    networks:
+      iot-backend:
+        aliases:
+          - iot-mqtt-hub
+
+  iot-mqtt-broker:
+    image: eclipse-mosquitto
+    deploy:
+      replicas: 1
+    ports:
+      - 1883:1883
+      - 9001:9001
+    volumes:
+      - "./iot-mqtt-hub:/app"
+    networks:
+      iot-backend:
+        aliases:
+          - iot-mqtt-broker
+
+
 
   # Not doing anything yet, but still needed
   database:
@@ -41,8 +72,6 @@ services:
       - .db.env
     deploy:
       replicas: 1
-
-# Persistent https certs
 
 networks:
   iot-backend:
