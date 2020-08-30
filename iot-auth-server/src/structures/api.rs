@@ -20,10 +20,10 @@ impl<'a, 'r> FromRequest<'a, 'r> for ApiKey {
   fn from_request(request: &'a Request<'r>) -> Outcome<Self, Self::Error> {
     let keys: Vec<_> = request.headers().get("Authorization").collect();
     match keys.len() {
-      0 => Outcome::Failure((Status::BadRequest, ApiKeyError::Missing)),
+      0 => Outcome::Failure((Status::Forbidden, ApiKeyError::Missing)),
       1 if token_valid(keys[0]) => Outcome::Success(ApiKey(keys[0].to_string())),
-      1 => Outcome::Failure((Status::BadRequest, ApiKeyError::Expired)),
-      _ => Outcome::Failure((Status::BadRequest, ApiKeyError::Invalid)),
+      1 => Outcome::Failure((Status::Unauthorized, ApiKeyError::Expired)),
+      _ => Outcome::Failure((Status::Forbidden, ApiKeyError::Invalid)),
     }
   }
 }
