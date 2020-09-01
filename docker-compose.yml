@@ -1,7 +1,7 @@
 version: '3.6'
 services:
   # Application-wide auth server
-  forward-auth-server:
+  iot-auth-server:
     image: iot-auth-server
     build: iot-auth-server
     # depends_on:
@@ -16,7 +16,7 @@ services:
     networks:
       iot-backend:
         aliases:
-          - forward-auth-server
+          - iot-auth-server
 
   iot-api-plants:
     image: iot-api-plants
