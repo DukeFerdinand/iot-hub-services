@@ -8,6 +8,9 @@ services:
     #   - database
     ports:
       - 8000:8000
+    env_file:
+      # Needs access to DB
+      - .db.env
     volumes:
       - "./iot-auth-server:/app"
     networks:

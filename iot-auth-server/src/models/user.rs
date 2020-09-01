@@ -3,7 +3,7 @@ use chrono::Utc;
 use mongodb::bson::{doc, Document};
 use serde::{Deserialize, Serialize};
 
-use super::lib;
+use super::lib::mongo::DBWrapper;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct User {
@@ -48,8 +48,15 @@ impl User {
     };
   }
   pub async fn create(&self) -> Result<Option<bson::Document>, String> {
+    let db = DBWrapper::new();
+    if db.is_err() {
+      // TODO: Handle this in a better way than saying "got error"
+      return Err(String::from(
+        "[User::create()] Got error initializing DBWrapper",
+      ));
+    }
     // await connection
-    let client = lib::mongo::establish_connection().await;
+    let client = db.unwrap().establish_connection().await;
     if client.is_ok() {
       let collection = client.unwrap().collection("users");
 
