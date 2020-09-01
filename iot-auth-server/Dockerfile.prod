@@ -1,5 +1,10 @@
 FROM debian:stretch-slim
 
+# Needed for ssl cargo deps
+RUN apt-get update && \
+  apt-get install libssl-dev pkg-config lsb-release -y && \
+  apt-get autoremove
+
 WORKDIR /app
 
 COPY ./Rocket.toml ./
