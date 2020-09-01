@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Break if anything exits poorly
-set -xe
+set -e
 
 echo "Building Auth Server"
 cd iot-auth-server

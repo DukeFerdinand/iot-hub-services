@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -xe
+set -e
 echo "Starting services --------"
 
 # Make sure your images are uploaded before this
