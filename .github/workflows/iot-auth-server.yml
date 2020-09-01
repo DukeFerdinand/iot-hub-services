@@ -18,11 +18,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: "Builds using nightly toolchain"
+    - name: "Uses rustup nightly toolchain"
       uses: actions-rs/toolchain@v1
       working-directory: "iot-auth-server"
       with:
         toolchain: nightly
+    - name: Build
       run: cargo build --verbose
 #     - name: Run tests
 #       working-directory: "iot-auth-server"
