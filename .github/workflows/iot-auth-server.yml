@@ -18,8 +18,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Build
+    - name: "Builds using nightly toolchain"
+      uses: actions-rs/toolchain@v1
       working-directory: "iot-auth-server"
+      with:
+        toolchain: nightly
       run: cargo build --verbose
 #     - name: Run tests
 #       working-directory: "iot-auth-server"
