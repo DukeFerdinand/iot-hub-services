@@ -68,10 +68,10 @@ services:
   # Not doing anything yet, but still needed
   database:
     image: mongo
-    env_file:
-      - .db.env
     deploy:
       replicas: 1
+    env_file:
+      - .db.env
 
 networks:
   iot-backend:

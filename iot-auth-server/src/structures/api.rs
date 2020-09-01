@@ -97,3 +97,14 @@ where
     serde_json::to_string(&generic_error).unwrap_or("Problem".to_owned())
   }
 }
+
+pub fn send_json_response<T, E>(
+  data: Option<T>,
+  error: Option<String>,
+  errors: Vec<Option<String>>,
+  details: Option<Vec<E>>,
+) where
+  T: Serialize,
+  E: Serialize,
+{
+}
