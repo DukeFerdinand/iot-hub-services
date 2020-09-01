@@ -11,6 +11,9 @@ services:
 
     ports:
       - "8000:8000"
+    env_file:
+      # Needs access to DB
+      - .db.env
     networks:
       iot-proxy:
       iot-backend:
