@@ -2,8 +2,8 @@ name: iot-auth-server
 
 on:
   push:
-    paths:
-      - "iot-auth-server/*"
+    # paths:
+    #   - "iot-auth-server/*"
     branches: [ master ]
   pull_request:
     branches: [ master ]
@@ -20,10 +20,10 @@ jobs:
     - uses: actions/checkout@v2
     - name: "Uses rustup nightly toolchain"
       uses: actions-rs/toolchain@v1
-      working-directory: "iot-auth-server"
       with:
         toolchain: nightly
     - name: Build
+      working-directory: "iot-auth-server"
       run: cargo build --verbose
 #     - name: Run tests
 #       working-directory: "iot-auth-server"
