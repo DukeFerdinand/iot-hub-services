@@ -57,26 +57,30 @@ impl User {
     }
     // await connection
     let client = db.unwrap().establish_connection().await;
-    if client.is_ok() {
-      let collection = client.unwrap().collection("users");
+    // if we can't connect, throw an error
+    if client.is_err() {
+      return Err(String::from(
+        "[User::create()] Got error connecting to requested database",
+      ));
+    }
 
-      let res = collection.insert_one(self.to_doc().clone(), None).await;
-      if res.is_ok() {
-        let returned = collection.find_one(self.to_doc(), None).await;
+    let collection = client.unwrap().collection("users");
+    let res = collection.insert_one(self.to_doc().clone(), None).await;
+    if res.is_ok() {
+      let returned = collection.find_one(self.to_doc(), None).await;
 
-        if returned.is_ok() {
-          Ok(returned.unwrap())
-        } else {
-          Err(String::from("Got error at find_one for inserted doc"))
-        }
+      if returned.is_ok() {
+        Ok(returned.unwrap())
       } else {
-        println!("Error handler at User::create {:?}", res.unwrap_err());
         Err(String::from(
-          "Got error inserting User into users collection",
+          "[User::create()] Got error at collection.find_one(<doc>)",
         ))
       }
     } else {
-      Err(String::from("Got error connecting to DB"))
+      println!("Error handler at User::create {:?}", res.unwrap_err());
+      Err(String::from(
+        "[User::create()] Got error inserting new user doc",
+      ))
     }
   }
 }
