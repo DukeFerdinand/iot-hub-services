@@ -3,8 +3,6 @@ use chrono::Utc;
 use mongodb::bson::{doc, Document};
 use serde::{Deserialize, Serialize};
 
-use tokio;
-
 use super::lib;
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -57,7 +55,6 @@ impl User {
 
       let res = collection.insert_one(self.to_doc().clone(), None).await;
       if res.is_ok() {
-        let doc = res.unwrap();
         let returned = collection.find_one(self.to_doc(), None).await;
 
         if returned.is_ok() {

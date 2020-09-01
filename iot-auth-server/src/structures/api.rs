@@ -98,13 +98,13 @@ where
   }
 }
 
-pub fn send_json_response<T, E>(
-  data: Option<T>,
-  error: Option<String>,
-  errors: Vec<Option<String>>,
-  details: Option<Vec<E>>,
-) where
-  T: Serialize,
-  E: Serialize,
-{
-}
+// pub fn send_json_response<T, E>(
+//   data: Option<T>,
+//   error: Option<String>,
+//   errors: Vec<Option<String>>,
+//   details: Option<Vec<E>>,
+// ) where
+//   T: Serialize,
+//   E: Serialize,
+// {
+// }
