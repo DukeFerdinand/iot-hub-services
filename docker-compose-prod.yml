@@ -15,7 +15,6 @@ services:
       # Needs access to DB
       - .db.env
     networks:
-      iot-proxy:
       iot-backend:
         aliases:
           - iot-auth-server
@@ -31,7 +30,6 @@ services:
     ports:
       - "8001:8001"
     networks:
-      iot-proxy:
       iot-backend:
         aliases:
           - iot-api-plants
