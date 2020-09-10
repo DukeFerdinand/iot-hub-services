@@ -3,7 +3,7 @@ services:
   # Application-wide auth server
   iot-auth-server:
     image: dougflynn/iot-auth-server:latest
-    build: iot-auth-server
+    # build: iot-auth-server
     # depends_on:
       #   - database
     deploy:
@@ -22,7 +22,7 @@ services:
 
   iot-api-plants:
     image: dougflynn/iot-api-plants:latest
-    build: iot-api-plants
+    # build: iot-api-plants
     # depends_on:
     #   - database
     deploy:
@@ -38,7 +38,7 @@ services:
 
   iot-mqtt-hub:
     image: dougflynn/iot-mqtt-hub:latest
-    build: iot-mqtt-hub
+    # build: iot-mqtt-hub
     # depends_on:
     #   - database
     deploy:
