@@ -51,8 +51,9 @@ impl User {
     let db = DBWrapper::new();
     if db.is_err() {
       // TODO: Handle this in a better way than saying "got error"
-      return Err(String::from(
-        "[User::create()] Got error initializing DBWrapper",
+      return Err(format!(
+        "[User::create()] Got error initializing DBWrapper: {}",
+        db.unwrap_err()
       ));
     }
     // await connection

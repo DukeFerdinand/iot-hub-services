@@ -66,25 +66,26 @@ services:
         aliases:
           - iot-mqtt-broker
 
-  database:
-    image: mongo
-    deploy:
-      replicas: 1
-      placement:
-        constraints:
-          # HDD is currently attached to manager pi
-          - "node.role==manager"
-    ports:
-      - 27017:27017
-    env_file:
-      - .db.env
-    volumes:
-      # change depending on how your pi is setup
-      - /home/manager/mounts/hdd0/iot-db:/data/db
-    networks:
-      iot-backend:
-        aliases:
-          - mongo-db
+  # Currently using hosted mongo, don't need this anymore
+  # database:
+  #   image: mongo
+  #   deploy:
+  #     replicas: 1
+  #     placement:
+  #       constraints:
+  #         # HDD is currently attached to manager pi
+  #         - "node.role==manager"
+  #   ports:
+  #     - 27017:27017
+  #   env_file:
+  #     - .db.env
+  #   volumes:
+  #     # change depending on how your pi is setup
+  #     - /home/manager/mounts/hdd0/iot-db:/data/db
+  #   networks:
+  #     iot-backend:
+  #       aliases:
+  #         - mongo-db
 
 networks:
   iot-backend:

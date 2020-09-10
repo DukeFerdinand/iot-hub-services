@@ -58,21 +58,19 @@ services:
         aliases:
           - iot-mqtt-broker
 
-
-
-  # Not doing anything yet, but still needed
-  database:
-    image: mongo
-    ports:
-      - 27017:27017
-    env_file:
-      - .db.env
-    networks:
-      iot-backend:
-        aliases:
-          - mongo-db
-    volumes:
-      - ./db-data:/data/db
+  # Currently using hosted mongo, don't need this anymore
+  # database:
+  #   image: mongo
+  #   ports:
+  #     - 27017:27017
+  #   env_file:
+  #     - .db.env
+  #   networks:
+  #     iot-backend:
+  #       aliases:
+  #         - mongo-db
+  #   volumes:
+  #     - ./db-data:/data/db
 
 networks:
   iot-backend:

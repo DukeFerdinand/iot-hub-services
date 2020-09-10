@@ -12,12 +12,10 @@ use mongodb::{options::ClientOptions, Client, Database};
 /// - Creating a connection
 /// - Authentication
 ///
-#[derive(Debug)]
 pub struct DBWrapper {
   // Not public as we should never use these values outside of methods
   user: String,
   password: String,
-  url: String,
   pub database: String,
 }
 
@@ -26,15 +24,12 @@ impl DBWrapper {
   /// This just pulls in all needed env vars and validates that the required ones exist
   pub fn new() -> Result<Self, std::env::VarError> {
     // Mount these via docker for dev or include in deploy
-    let user = env::var("MONGO_USERNAME")?;
-    let password = env::var("MONGO_PASSWORD")?;
-    let url = env::var("MONGO_URL")?;
-    let database = env::var("MONGO_DEFAULT_DATABASE")?;
+    let user = env::var("MONGO_INITDB_ROOT_USERNAME")?;
+    let password = env::var("MONGO_INITDB_ROOT_PASSWORD")?;
     Ok(Self {
       user,
       password,
-      url,
-      database,
+      database: "iot-auth".to_string(),
     })
   }
 
@@ -45,8 +40,8 @@ impl DBWrapper {
   ) -> Result<std::sync::Arc<Database>, mongodb::error::Error> {
     // Running in docker, so we use a docker host alias (TODO: Put in .env)
     let mut client_options = ClientOptions::parse(&format!(
-      "mongodb+srv://{}:{}@{}/{}?retryWrites=true&w=majority",
-      &self.user, &self.password, &self.url, &self.database
+      "mongodb://{}:{}@mongo-db:27017",
+      &self.user, &self.password
     ))
     .await?;
     // Not required, but good for logs
