@@ -9,6 +9,6 @@ WORKDIR /app
 
 COPY ./Rocket.toml ./
 
-COPY ./target/release/iot-auth ./
+COPY ./target/x86_64-unknown-linux-musl/release/iot-auth ./
 
 CMD ["./iot-auth"]

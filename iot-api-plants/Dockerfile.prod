@@ -4,6 +4,6 @@ WORKDIR /app
 
 COPY ./Rocket.toml ./
 
-COPY ./target/release/iot-api-plants ./
+COPY ./target/x86_64-unknown-linux-musl/release/iot-api-plants ./
 
 CMD ["./iot-api-plants"]

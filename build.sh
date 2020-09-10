@@ -10,8 +10,12 @@ set -e
 echo "Building Auth Server"
 cd iot-auth-server
 
-echo "Compiling for x86_64"
-cargo build --release
+echo "Compiling for portable x86_64"
+cross build --target x86_64-unknown-linux-musl --release
+
+echo "LISTING TARGET"
+ls ./target/release/
+
 echo "Creating docker image and pushing"
 docker build -t $AUTH_SERVER -f Dockerfile.prod .
 docker push $AUTH_SERVER
@@ -21,8 +25,9 @@ cd ..
 
 echo "Building plant api"
 cd iot-api-plants
-echo "Compiling for arm64"
-cargo build --release
+echo "Compiling for portable x86_64"
+cross build --target x86_64-unknown-linux-musl --release
+
 echo "Creating docker image and pushing"
 docker build -t $IOT_PLANTS -f Dockerfile.prod .
 docker push $IOT_PLANTS
