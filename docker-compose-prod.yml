@@ -89,5 +89,3 @@ services:
 
 networks:
   iot-backend:
-  iot-proxy:
-    external: true
