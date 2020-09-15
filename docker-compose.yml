@@ -1,6 +1,23 @@
 version: '3.6'
 services:
   # Application-wide auth server
+  iot-actix-server:
+    image: iot-actix-server
+    build: actix-test
+    # depends_on:
+    #   - database
+    ports:
+      - 8000:8000
+    env_file:
+      # Needs access to DB
+      - .db.env
+    volumes:
+      - "./actix-test:/app"
+    networks:
+      iot-backend:
+        aliases:
+          - iot-actix-server
+
   iot-auth-server:
     image: iot-auth-server
     build: iot-auth-server
